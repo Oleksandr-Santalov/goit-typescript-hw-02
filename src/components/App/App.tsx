@@ -8,31 +8,34 @@ import Loader from "../Loader/Loader.jsx";
 import ErrorMessage from "../ErrorMessage/ErrorMessage.jsx";
 import LoadMoreBtn from "../LoadMoreBtn/LoadMoreBtn.jsx";
 import ImageModal from "../ImageModal/ImageModal.jsx";
+import { ModalPhoto, Photo } from "../types";
 
 const notify = () => toast("Please write something in the field!");
 
 const App = () => {
-  const [gallery, setGallery] = useState([]);
-  const [query, setQuery] = useState("");
-  const [loader, setLoader] = useState(false);
-  const [error, setError] = useState("");
-  const [totalPage, setTotalPage] = useState(0);
-  // const totalPage = useRef(0);
-  const [page, setPage] = useState(totalPage);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [opening, setOpening] = useState({ link: "", description: "" });
+  const [gallery, setGallery] = useState<Photo[]>([]);
+  const [query, setQuery] = useState<string>("");
+  const [loader, setLoader] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+  const [totalPage, setTotalPage] = useState<number>(0);
+  const [page, setPage] = useState<number>(totalPage);
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+  const [opening, setOpening] = useState<ModalPhoto>({
+    link: "",
+    description: "",
+  });
 
-  const handleSubmit = (query) => {
+  const handleSubmit = (query: string) => {
     setQuery(`${query}`);
     setPage(1);
     setTotalPage(0);
     setGallery([]);
     setOpening({ link: "", description: "" });
     setModalIsOpen(false);
-    setError("");
+    setError(false);
   };
 
-  const handleOpenModal = (urls, alt) => {
+  const handleOpenModal = (urls: string, alt: string): void => {
     setOpening({ link: urls, description: alt });
 
     setModalIsOpen(true);
@@ -45,7 +48,7 @@ const App = () => {
   useEffect(() => {
     if (!query) return;
 
-    const savePhotos = async (query, page) => {
+    const savePhotos = async (query: string, page: number) => {
       setLoader(true);
 
       try {
@@ -55,7 +58,7 @@ const App = () => {
         setTotalPage(total_pages);
         setLoader(false);
       } catch (error) {
-        setError(error.message);
+        setError(true);
       } finally {
         setLoader(false);
       }
@@ -73,23 +76,17 @@ const App = () => {
         onSubmit={handleSubmit}
       />
 
-      {/* {gallery.length > 0 ? (
-        <ImageGallery onOpenModal={handleOpenModal} photos={gallery} />
-      ) : (
-        <ErrorMessage message={error} />
-      )} */}
-
       {gallery.length > 0 && (
-        <ImageGallery onOpenModal={handleOpenModal} photos={gallery} />
+        <ImageGallery openModal={handleOpenModal} photos={gallery} />
       )}
 
-      {error !== "" && <ErrorMessage message={error} />}
+      {error !== false && <ErrorMessage />}
 
       {loader && <Loader />}
 
       {gallery.length > 0 && !loader && page < totalPage && (
         <LoadMoreBtn
-          more={() => {
+          onLoadMore={() => {
             setPage(page + 1);
           }}
         />
@@ -99,8 +96,8 @@ const App = () => {
         <ImageModal
           modalIsOpen={modalIsOpen}
           onClose={handleCloseModal}
-          link={opening.link}
-          description={opening.description}
+          urlBig={opening.link}
+          alt={opening.description}
         />
       )}
 
