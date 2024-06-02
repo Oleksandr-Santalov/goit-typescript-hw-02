@@ -2,13 +2,14 @@ import { InfinitySpin } from "react-loader-spinner";
 
 const Loader = () => {
   return (
-    <>
-      <InfinitySpin
+    <p>
+      Loading...
+      {/* <InfinitySpin
         visible={true}
         width="200"
         color="#4fa94d"
         ariaLabel="infinity-spin-loading"
-      />
+      /> */}
       {/* <ThreeDots
         visible={true}
         height="80"
@@ -19,7 +20,7 @@ const Loader = () => {
         wrapperStyle={{}}
         wrapperClass=""
       /> */}
-    </>
+    </p>
   );
 };
 
