@@ -8,7 +8,7 @@ import Loader from "../Loader/Loader.jsx";
 import ErrorMessage from "../ErrorMessage/ErrorMessage.jsx";
 import LoadMoreBtn from "../LoadMoreBtn/LoadMoreBtn.jsx";
 import ImageModal from "../ImageModal/ImageModal.jsx";
-import { ModalPhoto, Photo, ApiResponse } from "../types";
+import { ModalPhoto, Photo } from "../types";
 
 const notify = () => toast("Please write something in the field!");
 
@@ -52,13 +52,11 @@ const App = () => {
       setLoader(true);
 
       try {
-        const { results, total_pages }: ApiResponse = await fetchApi(
-          query,
-          page
-        );
+        const { results, total_pages } = await fetchApi(query, page);
         setGallery((prevGallery) => [...prevGallery, ...results]);
 
         setTotalPage(total_pages);
+        setLoader(false);
       } catch (error) {
         setError(true);
       } finally {
@@ -82,7 +80,7 @@ const App = () => {
         <ImageGallery openModal={handleOpenModal} photos={gallery} />
       )}
 
-      {error && <ErrorMessage />}
+      {error !== false && <ErrorMessage />}
 
       {loader && <Loader />}
 
